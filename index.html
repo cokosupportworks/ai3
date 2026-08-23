@@ -1,0 +1,867 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>特別支援教育 × バイブコーディング 研修ナビ</title>
+<style>
+  :root {
+    --bg: #f5f7fb;
+    --card: #fff;
+    --text: #172033;
+    --muted: #64748b;
+    --line: #e2e8f0;
+    --accent: #4f46e5;
+    --accent2: #eef2ff;
+    --good: #0f766e;
+    --warn: #b45309;
+    --shadow: 0 8px 28px rgba(15, 23, 42, .08);
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+  .app {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    min-height: 100vh;
+  }
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    background: #111827;
+    color: #fff;
+    padding: 24px 18px;
+    overflow: auto;
+  }
+  .brand {
+    font-weight: 800;
+    font-size: 18px;
+    line-height: 1.35;
+    margin-bottom: 18px;
+  }
+  .brand small {
+    display: block;
+    color: #9ca3af;
+    font-weight: 500;
+    margin-top: 5px;
+  }
+  .nav { display: grid; gap: 7px; }
+  .nav button {
+    appearance: none; border: 0; background: transparent; color: #d1d5db;
+    text-align: left; padding: 11px 12px; border-radius: 11px; cursor: pointer; font: inherit;
+  }
+  .nav button:hover, .nav button.active { background: #27304a; color: #fff; }
+  .status {
+    margin-top: 20px; padding: 14px; border: 1px solid #334155;
+    border-radius: 14px; background: #172033;
+  }
+  .status strong { display: block; font-size: 14px; }
+  .progress {
+    height: 8px; background: #334155; border-radius: 99px;
+    overflow: hidden; margin: 10px 0 4px;
+  }
+  .progress > div { height: 100%; background: #818cf8; width: 0; transition: width 0.3s; }
+  .main { padding: 30px 32px 80px; max-width: 1100px; width: 100%; margin: auto; }
+  .hero { display: grid; grid-template-columns: 1.35fr .65fr; gap: 18px; margin-bottom: 18px; }
+  .heroCard, .card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius); box-shadow: var(--shadow);
+  }
+  .heroCard { padding: 28px; }
+  .heroCard h1 { font-size: clamp(28px, 4vw, 44px); line-height: 1.2; margin: 0 0 10px; }
+  .heroCard p { margin: 0; color: var(--muted); }
+  .goal {
+    padding: 22px; background: linear-gradient(135deg, #eef2ff, #f8fafc);
+    border-radius: var(--radius); border: 1px solid #c7d2fe;
+  }
+  .goal .big { font-size: 28px; font-weight: 800; color: var(--accent); }
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .card { padding: 20px; margin-bottom: 18px; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .sectionTitle { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 8px 0 14px; }
+  .sectionTitle h2 { margin: 0; font-size: 24px; }
+  .sectionTitle p { margin: 0; color: var(--muted); font-size: 14px; }
+  .badge {
+    display: inline-flex; align-items: center; padding: 5px 10px;
+    border-radius: 999px; font-size: 12px; font-weight: 700;
+    background: var(--accent2); color: #3730a3;
+  }
+  .step { display: flex; gap: 12px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .step:last-child { border-bottom: 0; }
+  .num {
+    min-width: 30px; height: 30px; border-radius: 50%;
+    display: grid; place-items: center; background: var(--accent); color: #fff; font-weight: 800;
+  }
+  .step h3 { margin: 0 0 3px; font-size: 16px; }
+  .muted { color: var(--muted); }
+  .callout {
+    padding: 14px 16px; border-radius: 14px; background: #fffbeb;
+    border: 1px solid #fde68a; margin: 12px 0;
+  }
+  .good { background: #ecfdf5; border-color: #a7f3d0; }
+  .danger { background: #fef2f2; border-color: #fecaca; }
+  pre {
+    white-space: pre-wrap; background: #0b1220; color: #e5e7eb;
+    border-radius: 14px; padding: 16px; overflow: auto;
+    font: 14px/1.65 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  }
+  .copyRow { display: flex; justify-content: flex-end; margin: -5px 0 12px; }
+  .btn {
+    border: 1px solid #cbd5e1; background: #fff; color: var(--text);
+    padding: 9px 13px; border-radius: 10px; cursor: pointer; font: inherit; font-weight: 700;
+  }
+  .btn:hover { background: #f8fafc; }
+  .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn.small { font-size: 13px; padding: 7px 10px; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .idea { border: 1px solid var(--line); border-radius: 14px; padding: 14px; background: #fff; }
+  .idea h4 { margin: 0 0 5px; }
+  .idea p { margin: 0; color: var(--muted); font-size: 14px; }
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 13px; }
+  .filters button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  input, textarea, select {
+    width: 100%; padding: 11px 12px; border: 1px solid #cbd5e1;
+    border-radius: 10px; background: #fff; color: var(--text); font: inherit;
+  }
+  textarea { min-height: 96px; resize: vertical; }
+  .field { display: grid; gap: 6px; margin-bottom: 12px; }
+  .field label { font-weight: 700; font-size: 14px; }
+  .saveRow { display: flex; gap: 9px; align-items: center; flex-wrap: wrap; }
+  .tiny { font-size: 12px; color: var(--muted); }
+  .checklist { display: grid; gap: 8px; }
+  .check {
+    display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px;
+    border: 1px solid var(--line); border-radius: 12px; transition: all 0.2s;
+  }
+  .check input { width: auto; margin-top: 5px; }
+  .check.done { background: #f0fdf4; border-color: #bbf7d0; }
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .qrBox { display: grid; grid-template-columns: 160px 1fr; gap: 16px; align-items: center; }
+  .qrBox img {
+    width: 160px; height: 160px; border: 1px solid var(--line);
+    border-radius: 10px; background: #fff; padding: 6px;
+  }
+  .footer { margin-top: 28px; color: var(--muted); font-size: 12px; text-align: center; }
+  .hide { display: none; }
+  .stickyTop { position: sticky; top: 10px; }
+  .route { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 15px; }
+  .route div {
+    padding: 12px 8px; border-radius: 12px; background: #f8fafc;
+    border: 1px solid var(--line); text-align: center; font-size: 13px;
+  }
+  .route strong { display: block; font-size: 20px; color: var(--accent); }
+  
+  .modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(17, 24, 39, 0.85); /* 半透明の暗い背景 */
+    display: flex; justify-content: center; align-items: center;
+    z-index: 9999; padding: 20px;
+    opacity: 1; transition: opacity 0.2s ease;
+  }
+  .modal.hide {
+    opacity: 0; pointer-events: none;
+  }
+  .modal-content {
+    position: relative; display: flex; flex-direction: column; align-items: center;
+    max-width: 100%; max-height: 100%;
+  }
+  .modal-close {
+    position: absolute; top: -40px; right: 0;
+    background: #374151; color: #fff; border: none; padding: 6px 14px;
+    border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  }
+  .modal-close:hover { background: #4b5563; }
+  .modal-content img {
+    max-width: 100%; max-height: 85vh; border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4); background: #fff;
+  }
+  .show-img-btn {
+    display: inline-flex; align-items: center; gap: 4px; margin-left: 8px;
+    font-size: 11px; padding: 3px 8px; border-radius: 6px;
+    background: #f1f5f9; border: 1px solid #cbd5e1; color: #475569;
+    cursor: pointer; vertical-align: middle; transition: all 0.2s;
+  }
+  .show-img-btn:hover { background: #e2e8f0; color: #1e293b; border-color: #94a3b8; }
+
+  @media(max-width: 900px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar { position: sticky; z-index: 20; height: auto; padding: 12px 14px; }
+    .nav { display: flex; overflow: auto; }
+    .nav button { white-space: nowrap; }
+    .status { display: none; }
+    .main { padding: 18px 14px 50px; }
+    .hero, .grid2, .split { grid-template-columns: 1fr; }
+    .cards, .grid3 { grid-template-columns: 1fr; }
+    .route { grid-template-columns: repeat(2, 1fr); }
+    .qrBox { grid-template-columns: 1fr; text-align: center; }
+    .qrBox img { margin: auto; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand">特別支援教育 ×<br>バイブコーディング 研修ナビ<small>90分研修・参加者用</small></div>
+  <div class="nav" id="nav"></div>
+  <div class="status">
+    <strong>今日の進捗</strong>
+    <div class="progress"><div id="progressBar"></div></div>
+    <span id="progressText">0 / 5</span>
+  </div>
+</aside>
+<main class="main">
+<section id="home">
+<div class="hero">
+ <div class="heroCard">
+   <div class="badge">90分・参加者用</div>
+   <h1>「作る → 育てる → とどける」</h1>
+   <p>Gemini Canvasで教材アプリを作り、必要に応じてGitHub Pagesで公開、最後にQRコードまでつなげます。ここは研修中に開きっぱなしで使うためのナビです。</p>
+   <div class="route">
+     <div><strong>01</strong>つくる</div>
+     <div><strong>02</strong>試す</div>
+     <div><strong>03</strong>育てる</div>
+     <div><strong>04</strong>公開</div>
+     <div><strong>05</strong>QR</div>
+   </div>
+ </div>
+ <div class="goal">
+   <div class="muted">第一ゴール</div>
+   <div class="big">自分の教材アプリを1つ形にする</div>
+   <p>GitHub公開は発展課題。60分時点でここまで来ていれば成功です。</p>
+ </div>
+</div>
+<div class="cards">
+ <div class="card"><div class="badge">STEP 1</div><h3>サンプルで体験</h3><p>サンプルプロンプトをコピーして、Canvasでアプリ生成。</p></div>
+ <div class="card"><div class="badge">STEP 2</div><h3>自分の教材を作る</h3><p>「誰に・何を・どう使う」を考え、AIと会話しながら形にします。</p></div>
+ <div class="card"><div class="badge">STEP 3</div><h3>できる人は公開</h3><p>GitHub Pages → URL → QRコード。スマホでも動作確認。</p></div>
+</div>
+<div class="callout good"><strong>研修の考え方：</strong>コードを書くことが目的ではありません。先生が「この子に、こんな教材があったらいいな」と考え、それをAIと一緒に形にすることが主役です。</div>
+</section>
+
+<section id="sample" class="card">
+<div class="sectionTitle"><div><h2>① サンプルアプリ</h2><p>まずは全員ここから</p></div><span class="badge">全員</span></div>
+<p>Geminiを開き、チャット欄の＋ボタンからCanvasを選んだ後、下のプロンプトをそのまま貼り付けます。現在のGemini Canvasでは、アプリを生成し、プロンプトで更新したりコードを直接編集したりできます。</p>
+<div class="copyRow"><button class="btn small" onclick="copyText('samplePrompt')">プロンプトをコピー</button></div>
+<pre id="samplePrompt">あなたは特別支援教育並びに教育ソフト開発のエキスパートです。特別支援学校で使用する教材Webアプリを作ってください。
+
+【対象】
+小学部の児童
+
+【目的】
+ひらがなの読みを練習する
+
+【アプリの内容】
+ひらがなを1文字表示し、その文字に対応するイラストを3つの選択肢から選ぶアプリにしてください。
+
+【操作】
+選択肢を押すと正誤を判定し、正解なら「せいかい！」、不正解なら「もう一度」と表示してください。次の問題へ進むボタンも用意してください。
+
+【デザイン】
+・児童が操作しやすい大きなボタン
+・文字を大きくする
+・画面をシンプルにする
+・色だけに頼らず、文字でも意味が分かるようにする
+
+【技術】
+ブラウザだけで動作するHTML/CSS/JavaScriptのシンプルなWebアプリとして作成してください。
+外部APIやログイン機能は使わないでください。</pre>
+<div class="callout">生成したら、必ず<strong>「触ってみる → 違和感を見つける」</strong>までやってください。完成直後に次へ進まないのがポイントです。</div>
+<a href="https://cokosupportworks.github.io/appsample01/" target="_blank" rel="noopener">Gemini3.1proで生成したサンプルはこちら</a> 
+</section>
+
+<section id="prompt" class="card">
+<div class="sectionTitle"><div><h2>② サンプルプロンプト／会話の型</h2><p>「一発で完璧」を目指さない</p></div><span class="badge">全員</span></div>
+<h3>最初の生成</h3>
+<p>上のサンプルを使えばOK。自分のアプリに移るときは、下のテンプレートの［ ］だけ書き換えます。</p>
+<div class="copyRow"><button class="btn small" onclick="copyText('templatePrompt')">テンプレートをコピー</button></div>
+<pre id="templatePrompt">あなたは特別支援教育並びに教育ソフト開発のエキスパートです。特別支援学校で使用する教材Webアプリを作ってください。
+
+【対象】
+［学部・学年・児童生徒像］
+
+【目的】
+［何を学ぶ／何ができるようになる］
+
+【アプリの内容】
+［画面に何が出て、利用者は何をするか］
+
+【操作】
+［ボタン、選択、入力、次へ、戻る、リセットなど］
+
+【必要な機能】
+［正誤判定、タイマー、音声、記録、ランダム出題など］
+
+【デザイン】
+・特別支援学校で使うことを想定
+・文字を大きくする
+・ボタンを大きくする
+・情報量を整理する
+・色だけに頼らず、文字や形でも区別できるようにする
+
+【技術】
+HTML/CSS/JavaScriptだけで動作するシンプルなWebアプリにしてください。
+外部APIやログイン機能は使わないでください。</pre>
+<h3>修正は短くてもよい</h3>
+<div class="grid2">
+ <div>
+   <pre>ボタンをもっと大きくしてください。
+文字も少し大きくしてください。</pre>
+   <button class="btn small" onclick="copyText('fix1')" style="margin-top:-6px">コピー</button>
+   <span id="fix1" class="hide">ボタンをもっと大きくしてください。\n文字も少し大きくしてください。</span>
+ </div>
+ <div>
+   <pre>選択肢が多いので、3択にしてください。
+画面の情報量も減らしてください。</pre>
+   <button class="btn small" onclick="copyText('fix2')" style="margin-top:-6px">コピー</button>
+   <span id="fix2" class="hide">選択肢が多いので、3択にしてください。\n画面の情報量も減らしてください。</span>
+ </div>
+ <div>
+   <pre>正解・不正解という表現を避けて、
+「できたね」「もう一度やってみよう」に変更してください。</pre>
+   <button class="btn small" onclick="copyText('fix3')" style="margin-top:-6px">コピー</button>
+   <span id="fix3" class="hide">正解・不正解という表現を避けて、「できたね」「もう一度やってみよう」に変更してください。</span>
+ </div>
+ <div>
+   <pre>今の機能を壊さないように、
+ランダム出題だけ追加してください。</pre>
+   <button class="btn small" onclick="copyText('fix4')" style="margin-top:-6px">コピー</button>
+   <span id="fix4" class="hide">今の機能を壊さないように、ランダム出題だけ追加してください。</span>
+ </div>
+</div>
+<div class="callout"><strong>うまくいかないとき：</strong>「何が起きたか」「どうしたいか」をそのまま日本語で伝えて大丈夫です。エラーが出たらスクリーンショットを見せて説明しても構いません。</div>
+</section>
+
+<section id="ideas" class="card">
+<div class="sectionTitle"><div><h2>③ 教材アイデア集</h2><p>「自由に考えて」で止まらないための入口</p></div><span class="badge">アイデア</span></div>
+<div class="filters" id="filters"></div>
+<div class="grid3" id="ideasGrid"></div>
+</section>
+
+<section id="plan" class="card">
+<div class="sectionTitle"><div><h2>④ 自作教材 企画シート</h2><p>入力内容をファイルとしてダウンロードできます</p></div><span class="badge">制作</span></div>
+<div class="grid2">
+ <div>
+  <div class="field"><label>対象</label><input id="target" placeholder="例：小学部4年・ひらがな学習中"></div>
+  <div class="field"><label>教材の目的</label><textarea id="purpose" placeholder="例：ひらがなの読みと絵の対応を練習する"></textarea></div>
+  <div class="field"><label>学習・指導上の困りごと</label><textarea id="problem" placeholder="例：紙面では選択肢が多くなると混乱する"></textarea></div>
+ </div>
+ <div>
+  <div class="field"><label>アプリで何をする？</label><textarea id="action" placeholder="例：1文字を見て、3つの絵から選ぶ"></textarea></div>
+  <div class="field"><label>最低限ほしい機能</label><textarea id="features" placeholder="例：3択、正誤判定、次へ、リセット"></textarea></div>
+  <div class="field"><label>使う場面・配慮</label><textarea id="context" placeholder="例：iPadで机上学習。ボタンは大きく、刺激は少なめ"></textarea></div>
+ </div>
+</div>
+<div class="saveRow">
+  <button class="btn primary" onclick="downloadPlan()">企画シートをダウンロード</button>
+  <button class="btn" onclick="generatePlanPrompt()">企画シートの内容をプロンプト化</button>
+  <button class="btn" onclick="clearPlan()">入力を消去</button>
+  <span id="saveMsg" class="tiny"></span>
+</div>
+<div class="callout good"><strong>保存について：</strong>「企画シートをダウンロード」を押すと、入力内容を<strong>テキストファイル（.txt）</strong>としてダウンロードフォルダに保存できます。ファイル名には日時が入るため、後から見つけやすくなっています。</div>
+<div id="promptResult" class="hide" style="margin-top:16px">
+  <div class="sectionTitle" style="margin-top:0"><div><h3 style="margin:0">生成されたGemini用プロンプト</h3><p>このままコピーしてGemini Canvasに貼り付けられます。</p></div><span class="badge">生成結果</span></div>
+  <div class="copyRow"><button class="btn small" onclick="copyText('generatedPrompt')">プロンプトをコピー</button></div>
+  <textarea id="generatedPrompt" readonly style="min-height:360px"></textarea>
+</div>
+</section>
+
+<section id="gemini" class="card">
+<div class="sectionTitle"><div><h2>⑤ Gemini修正指示集</h2><p>教材としての「ちょっとした違和感」を改善する</p></div><span class="badge">改善</span></div>
+<div class="grid3" id="fixIdeas"></div>
+</section>
+
+<section id="github" class="card">
+<div class="sectionTitle"><div><h2>⑥ GitHub Pages 公開手順</h2><p>ここからは余力のある人向け</p></div><span class="badge">発展</span></div>
+<div class="callout danger"><strong>公開前チェック：</strong>児童生徒の氏名、顔写真、学籍番号、成績、個別の支援情報など、個人を特定できる情報を入れないでください。外部APIキーやパスワードも公開禁止です。</div>
+<div class="checklist" id="githubChecklist"></div>
+<p class="tiny"></p>
+</section>
+
+<section id="qr" class="card">
+<div class="sectionTitle"><div><h2>⑦ URL → QRコード</h2><p>公開したURLを入力して、スマホで読み取る</p></div><span class="badge">発展</span></div>
+<div class="field">
+  <label>公開したページのURL</label>
+  <input id="urlInput" type="url" placeholder="https://ユーザー名.github.io/リポジトリ名/">
+</div>
+<div class="saveRow">
+  <button class="btn primary" onclick="makeQR()">QRコードを作る</button>
+  <a id="openUrl" class="btn" target="_blank" rel="noopener">URLを開く</a>
+</div>
+<div id="qrArea" class="qrBox hide" style="margin-top:16px">
+  <img id="qrImg" alt="入力したURLのQRコード">
+  <div>
+    <h3>📱 スマホで確認</h3>
+    <p>QRコードを読み取り、実際に教材が動くか確認します。</p>
+    <p class="tiny">このページのQR画像は外部のQR生成サービスを利用します。校内ネットワークで表示できない場合は、Chrome等のブラウザ機能や校内で許可されたQR生成方法を使ってください。</p>
+  </div>
+</div>
+</section>
+
+<section id="trouble" class="card">
+<div class="sectionTitle"><div><h2>⑧ 困ったとき</h2><p>まずAIに聞く → それでも無理なら人に相談</p></div><span class="badge">トラブル解決</span></div>
+<div class="grid2" id="troubles"></div>
+</section>
+
+<section id="finish" class="card">
+<div class="sectionTitle"><div><h2>⑨ 研修終了チェック</h2><p>今日できたことを確認</p></div><span class="badge">まとめ</span></div>
+<div class="checklist" id="finishChecklist"></div>
+<div class="callout good"><strong>今日の合言葉：</strong>「先生が教材を考える。AIがコード化を手伝う。」</div>
+<p class="footer">Gemini Canvasの操作やGitHubの画面は更新されることがあります。研修時点の公式ヘルプも確認してください。<br>
+<a href="https://support.google.com/gemini/answer/16047321?hl=ja-JP" target="_blank" rel="noopener">Gemini Canvas 公式ヘルプ</a> ／ 
+<a href="https://docs.github.com/ja/pages/quickstart" target="_blank" rel="noopener">GitHub Pages 公式ガイド</a></p>
+</section>
+</main>
+</div>
+
+<div id="imgModal" class="modal hide">
+  <div class="modal-content">
+    <button id="closeImgModal" class="modal-close">閉じる ×</button>
+    <img id="modalImgTarget" src="" alt="確認用画像">
+  </div>
+</div>
+
+<script>
+// ナビゲーションアイテム
+const navItems = [
+  ['home', '🏠 研修ナビ'],
+  ['sample', '▶ ① サンプル'],
+  ['prompt', '✍ ② プロンプト'],
+  ['ideas', '💡 ③ アイデア集'],
+  ['plan', '📝 ④ 企画シート'],
+  ['gemini', '🛠 ⑤ 改善指示'],
+  ['github', '🌐 ⑥ GitHub Pages'],
+  ['qr', '🔳 ⑦ QRコード'],
+  ['trouble', '🧰 ⑧ 困ったとき'],
+  ['finish', '✅ ⑨ 終了チェック']
+];
+
+const nav = document.getElementById('nav');
+navItems.forEach(([id, label]) => {
+  const b = document.createElement('button');
+  b.textContent = label;
+  b.onclick = () => document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+  nav.appendChild(b);
+});
+
+// アイデア集
+const ideas = [
+  ['自立活動', '気持ちを選ぶ', '「うれしい・かなしい・おこっている・つかれた」などから選び、選んだ気持ちを表示'],
+  ['自立活動', 'SOS・要求表出', '「手伝って」「休みたい」「わからない」などを選んで伝える'],
+  ['自立活動', '行動予定', '今日やることを順番に表示し、終わったらチェックする'],
+  ['国語', 'ひらがな3択', '文字と絵を対応させ、3択から選ぶ'],
+  ['国語', 'ことばの並べ替え', '絵や単語カードを並べて簡単な文を作る'],
+  ['国語', '漢字読みクイズ', '漢字を見て読みを3択から選ぶ'],
+  ['算数・数学', '時計読み', '時計の絵を見て時刻を選ぶ'],
+  ['算数・数学', 'お金の支払い', '商品と金額を見て、支払う硬貨を選ぶ'],
+  ['算数・数学', '数の大小', '2つの数を見て大きい方を選ぶ'],
+  ['コミュニケーション', 'あいさつ練習', '場面を見て「おはよう」「こんにちは」などから選ぶ'],
+  ['コミュニケーション', 'Yes / No', '質問に対して「はい・いいえ・わからない」を選ぶ'],
+  ['生活', '歯みがき手順', '絵や短い文で手順を順番に確認する'],
+  ['生活', '買い物練習', '商品を選び、合計金額や支払いを練習する'],
+  ['生活', '給食準備チェック', '準備することを順番に確認する'],
+  ['授業支援', 'タイマー', '残り時間を大きく表示し、終わりを知らせる'],
+  ['授業支援', '順番カード', '「いま・つぎ・そのあと」を大きく表示する']
+];
+
+const filters = document.getElementById('filters');
+const ideaCats = ['すべて', ...new Set(ideas.map(x => x[0]))];
+
+ideaCats.forEach((cat, i) => {
+  const b = document.createElement('button');
+  b.className = 'btn small' + (i === 0 ? ' active' : '');
+  b.textContent = cat;
+  b.onclick = () => {
+    document.querySelectorAll('#filters button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    renderIdeas(cat);
+  };
+  filters.appendChild(b);
+});
+
+function renderIdeas(cat = 'すべて') {
+  const grid = document.getElementById('ideasGrid');
+  grid.innerHTML = '';
+  ideas.filter(x => cat === 'すべて' || x[0] === cat).forEach(([c, t, p]) => {
+    const d = document.createElement('div');
+    d.className = 'idea';
+    d.innerHTML = `<div class="tiny">${c}</div><h4>${t}</h4><p>${p}</p>`;
+    grid.appendChild(d);
+  });
+}
+renderIdeas();
+
+// 修正指示集
+const fixes = [
+  ['見やすさ', '文字を大きくして。行間も広げてください。'],
+  ['操作', 'ボタン同士の間隔を広げ、押し間違いにくくしてください。'],
+  ['情報量', '1画面に表示する情報を減らしてください。'],
+  ['表現', '「正解・不正解」ではなく、やさしい表現に変更してください。'],
+  ['色', '色覚だけに頼らず、文字や記号でも区別できるようにしてください。'],
+  ['難易度', '最初は簡単な問題だけにして、慣れたら難しくできるようにしてください。'],
+  ['記録', '最後に「できた回数」を大きく表示してください。'],
+  ['音声', '必要な場面だけ音声で読み上げられるようにしてください。'],
+  ['iPad', 'iPadのタッチ操作を想定して、ボタンを大きくしてください。'],
+  ['余計な変更', '今ある機能を壊さず、今回指定した部分だけ変更してください。'],
+  ['エラー', 'このエラーの原因を初心者にも分かるように説明し、修正してください。'],
+  ['確認', '変更した内容を箇条書きで最後に説明してください。']
+];
+
+const fi = document.getElementById('fixIdeas');
+fixes.forEach(([t, p]) => {
+  const d = document.createElement('div');
+  d.className = 'idea';
+  d.innerHTML = `<h4>${t}</h4><p>${p}</p>`;
+  const b = document.createElement('button');
+  b.className = 'btn small';
+  b.style.marginTop = '10px';
+  b.textContent = 'コピー';
+  b.addEventListener('click', () => {
+    navigator.clipboard.writeText(p)
+      .then(() => toast('コピーしました'))
+      .catch(() => toast('コピーできませんでした。手動で選択してください。'));
+  });
+  d.appendChild(b);
+  fi.appendChild(d);
+});
+
+// GitHubチェックリスト
+const gitSteps = [
+  'Gemini Canvasのダウンロードボタンで、完成したアプリのコード（◯◯◯.html）をダウンロードし、ファイル名は「index.html」に変更する。<button class="show-img-btn" data-img="https://placehold.co/800x450/e2e8f0/475569?text=1.+Download+from+Canvas">🖼️ 画像で確認</button>',
+  'GitHubでNew repositoryを作る。リポジトリ名は自分で分かるものにする。なお、リポジトリ名はアプリURLの末尾となる。<button class="show-img-btn" data-img="6-2.png">🖼️ 画像で確認</button>',
+  'リポジトリページのQuick setup内「uploading an existing file」を押し、開いたページに「index.html」ファイルをドラッグするなどし、「Comit changes」を押す。<button class="show-img-btn" data-img="https://placehold.co/800x450/e2e8f0/475569?text=3.+Upload+File">🖼️ 画像で確認</button>',
+  'Settings → Pagesを開き、Branch内「None」を「main」に変更し、「Save」を押す。<button class="show-img-btn" data-img="https://placehold.co/800x450/e2e8f0/475569?text=4.+Settings+Pages">🖼️ 画像で確認</button>',
+  '数十秒から数分後に同じページを再読み込みし、新たに表示される、アプリの公開URLを開き、アプリが実際に動くことを確認する。',
+  '問題がなければ、QRコードのページにURLを貼り付ける。'
+];
+
+const gc = document.getElementById('githubChecklist');
+gitSteps.forEach((s, i) => {
+  const l = document.createElement('label');
+  l.className = 'check';
+  l.innerHTML = `<input type="checkbox" data-git="${i}"><div><strong>${i + 1}. </strong>${s}</div>`;
+  gc.appendChild(l);
+});
+
+// トラブルシューティング
+const trouble = [
+  ['Geminiが思ったように作らない①', 'AIモデルがFlashもしくはFlash-Liteを選択中なら、Proに切り替える（要Googleアカウントでのログイン）。'],
+  ['Geminiが思ったように作らない②', '「どこが違うか」「どうしたいか」を具体的に伝える。必要なら「この機能だけ修正して」と範囲を限定する。解決が難しい場合はChatGPT等、他のAIに相談する。'],
+  ['Geminiが思ったように作らない③', '一つのチャットでのやり取りが長くなりすぎてAIの思考が低下している可能性があるため、「新しいチャットでアプリ制作を引き継げるようにして」と指示し、生成されたプロンプトを新規チャットに貼り付けて制作を継続する。'], 
+  ['コードが壊れた', '直前の状態に戻せるなら戻す。難しければGeminiにエラー内容を見せ、「原因と修正案」を求める。または、コード全体をコピーし、ChatGPTに渡し、修正を指示する。'],
+  ['GitHubで迷った', '今いる画面のスクリーンショットを残し、どこまでできたかを伝えて相談する。'],
+  ['GitHubのユーザー名を変更したい', '画面右上のアイコンからsettings→左メニューのAccountを押し、Change usernameを押すと出てくるポップアップの「I understand」ボタンを押す。新しいユーザー名を入力して決定すると変更される。なお、公開済みのアプリがあれば、URLも変更されてしまう。'],
+  ['Pagesを公開したのに表示されない', 'ブランチ(「main」になっているか)・ファイル名(「index.html」は、iが大文字になっていると認識されない）・公開URLを確認。反映に少し時間がかかる場合もある。'],
+  ['個人情報を入れてしまった', '公開前なら削除・修正する。公開後なら「見えなくしたつもり」だけにせず、公開状態と履歴を確認して必要な対応をする。']
+];
+
+const tr = document.getElementById('troubles');
+trouble.forEach(([t, p]) => {
+  const d = document.createElement('div');
+  d.className = 'idea';
+  d.innerHTML = `<h4>${t}</h4><p>${p}</p>`;
+  tr.appendChild(d);
+});
+
+// 終了チェックリスト
+const finish = [
+  'Gemini Canvasでアプリを1つ生成した',
+  'AIに修正を依頼して、アプリを1回以上改善した',
+  '自分の教材アイデアをアプリとして形にした',
+  '（発展）GitHub Pagesで公開した',
+  '（発展）スマホでURLまたはQRコードからアプリを開いた'
+];
+
+const fc = document.getElementById('finishChecklist');
+finish.forEach((s, i) => {
+  const l = document.createElement('label');
+  l.className = 'check';
+  l.innerHTML = `<input type="checkbox" data-finish="${i}"><div>${s}</div>`;
+  fc.appendChild(l);
+});
+
+// 進行状況の保存と読み込み
+function saveState() {
+  const state = {};
+  document.querySelectorAll('[data-git],[data-finish]').forEach(x => {
+    const key = x.dataset.git !== undefined ? 'git' + x.dataset.git : 'finish' + x.dataset.finish;
+    state[key] = x.checked;
+  });
+  localStorage.setItem('vibeTrainingState', JSON.stringify(state));
+  updateProgress();
+}
+
+function loadState() {
+  try {
+    const s = JSON.parse(localStorage.getItem('vibeTrainingState') || '{}');
+    document.querySelectorAll('[data-git],[data-finish]').forEach(x => {
+      const k = x.dataset.git !== undefined ? 'git' + x.dataset.git : 'finish' + x.dataset.finish;
+      if (s[k] != null) x.checked = s[k];
+    });
+  } catch (e) {}
+  updateProgress();
+}
+
+document.addEventListener('change', e => {
+  if (e.target.matches('[data-git],[data-finish]')) {
+    e.target.parentElement.classList.toggle('done', e.target.checked);
+    saveState();
+  }
+});
+
+function updateProgress() {
+  const all = [...document.querySelectorAll('[data-finish]')];
+  const done = all.filter(x => x.checked).length;
+  document.getElementById('progressBar').style.width = (done / all.length * 100) + '%';
+  document.getElementById('progressText').textContent = done + ' / ' + all.length + ' 項目';
+}
+
+// ユーティリティ（コピー機能の修正部分）
+function copyText(id) {
+  let el = document.getElementById(id);
+  
+  // TEXTAREA や INPUT の場合は value を取得、それ以外は textContent
+  let txt = (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') ? el.value : el.textContent;
+  
+  // iframe プレビュー環境での制限を回避するためのフォールバック処理
+  let temp = document.createElement('textarea');
+  temp.value = txt;
+  document.body.appendChild(temp);
+  temp.select();
+  
+  try {
+    document.execCommand('copy');
+    toast('コピーしました');
+  } catch (err) {
+    toast('コピーできませんでした。手動で選択してください。');
+  }
+  
+  document.body.removeChild(temp);
+}
+
+function toast(msg) {
+  let t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:10px 14px;border-radius:10px;z-index:100;box-shadow:0 8px 20px rgba(0,0,0,.18)';
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 1800);
+}
+
+// 企画シート関連
+const planFields = [
+  ['target', '対象'],
+  ['purpose', '教材の目的'],
+  ['problem', '学習・指導上の困りごと'],
+  ['action', 'アプリで何をする？'],
+  ['features', '最低限ほしい機能'],
+  ['context', '使う場面・配慮']
+];
+
+function getPlanData() {
+  const data = {};
+  planFields.forEach(([id, label]) => {
+    data[id] = document.getElementById(id).value.trim();
+  });
+  return data;
+}
+
+function loadPlan() {
+  planFields.forEach(([id]) => {
+    document.getElementById(id).value = localStorage.getItem('plan_' + id) || '';
+  });
+}
+
+function buildPlanText(data = getPlanData()) {
+  const now = new Date();
+  const stamp = new Intl.DateTimeFormat('ja-JP', { dateStyle: 'full', timeStyle: 'short' }).format(now);
+  return `特別支援学校・自作教材 企画シート
+作成日時：${stamp}
+
+【対象】
+${data.target || '（未入力）'}
+
+【教材の目的】
+${data.purpose || '（未入力）'}
+
+【学習・指導上の困りごと】
+${data.problem || '（未入力）'}
+
+【アプリで何をする？】
+${data.action || '（未入力）'}
+
+【最低限ほしい機能】
+${data.features || '（未入力）'}
+
+【使う場面・配慮】
+${data.context || '（未入力）'}
+`;
+}
+
+function downloadFile(filename, content, mime = 'text/plain;charset=utf-8') {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function downloadPlan() {
+  const data = getPlanData();
+  const hasAny = Object.values(data).some(v => v);
+  if (!hasAny) {
+    toast('企画シートに何か入力してからダウンロードしてください');
+    return;
+  }
+  
+  planFields.forEach(([id]) => localStorage.setItem('plan_' + id, data[id]));
+  
+  const dt = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  const filename = `自作教材_企画シート_${dt.getFullYear()}${pad(dt.getMonth() + 1)}${pad(dt.getDate())}_${pad(dt.getHours())}${pad(dt.getMinutes())}.txt`;
+  
+  const planText = buildPlanText(data);
+  const generated = buildPrompt(data);
+  const content = planText + `\n\n========================================\n【Geminiに渡すためのプロンプト】\n========================================\n\n${generated}\n`;
+  
+  downloadFile(filename, content);
+  document.getElementById('saveMsg').textContent = 'ダウンロードしました（ダウンロードフォルダをご確認ください）';
+  setTimeout(() => document.getElementById('saveMsg').textContent = '', 3500);
+}
+
+function buildPrompt(data = getPlanData()) {
+  return `あなたは特別支援教育並びに教育ソフト開発のエキスパートです。特別支援学校で使用する教材Webアプリを作ってください。
+
+【対象】
+${data.target || '具体化してください'}
+
+【教材の目的】
+${data.purpose || '具体化してください'}
+
+【学習・指導上の困りごと】
+${data.problem || '具体化してください'}
+
+【アプリの内容】
+${data.action || '具体化してください'}
+
+【最低限ほしい機能】
+${data.features || '使いやすい最小限の機能を提案してください'}
+
+【使う場面・配慮】
+${data.context || '特別支援学校での利用を想定し、操作しやすさに配慮してください'}
+
+【デザイン・アクセシビリティ】
+・児童生徒が操作しやすい大きなボタン
+・文字を大きく、情報量を整理する
+・色だけに頼らず、文字や形でも意味を区別できるようにする
+・タッチ操作を想定する
+
+【技術】
+HTML/CSS/JavaScriptだけで動作するシンプルなWebアプリとして作成してください。
+外部API、ログイン機能、APIキーなどは使わないでください。
+
+まず、上記の内容をもとに、初心者にも扱いやすい教材アプリとして実装してください。実装後は、どの機能を作ったかを簡潔に説明してください。`;
+}
+
+function generatePlanPrompt() {
+  const data = getPlanData();
+  const hasAny = Object.values(data).some(v => v);
+  if (!hasAny) {
+    toast('企画シートに内容を入力してください');
+    return;
+  }
+  
+  planFields.forEach(([id]) => localStorage.setItem('plan_' + id, data[id]));
+  document.getElementById('generatedPrompt').value = buildPrompt(data);
+  document.getElementById('promptResult').classList.remove('hide');
+  document.getElementById('promptResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function clearPlan() {
+  planFields.forEach(([id]) => {
+    localStorage.removeItem('plan_' + id);
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('generatedPrompt').value = '';
+  document.getElementById('promptResult').classList.add('hide');
+  document.getElementById('saveMsg').textContent = '';
+}
+
+// QRコード関連
+function makeQR() {
+  const url = document.getElementById('urlInput').value.trim();
+  if (!/^https?:\/\//i.test(url)) {
+    toast('http:// または https:// のURLを入力してください');
+    return;
+  }
+  const api = 'https://quickchart.io/qr?size=320&margin=2&text=' + encodeURIComponent(url);
+  document.getElementById('qrImg').src = api;
+  document.getElementById('qrArea').classList.remove('hide');
+  const a = document.getElementById('openUrl');
+  a.href = url;
+  localStorage.setItem('qr_url', url);
+}
+
+// 初期化処理
+document.getElementById('urlInput').value = localStorage.getItem('qr_url') || '';
+document.querySelectorAll('[data-git],[data-finish]').forEach(x => {
+  x.addEventListener('change', () => x.parentElement.classList.toggle('done', x.checked));
+});
+
+loadPlan();
+loadState();
+
+// スクロール時のナビゲーション連動
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+      const b = [...document.querySelectorAll('.nav button')].find(b => b.getAttribute('onclick')?.includes(`'${e.target.id}'`));
+      if (b) b.classList.add('active');
+    }
+  });
+}, { rootMargin: '-30% 0px -55% 0px' });
+
+navItems.forEach(([id]) => observer.observe(document.getElementById(id)));
+
+// 画像ポップアップ（モーダル）の制御
+const imgModal = document.getElementById('imgModal');
+const modalImgTarget = document.getElementById('modalImgTarget');
+const closeImgModal = document.getElementById('closeImgModal');
+
+// 画面内のどこかでクリックされたとき、「show-img-btn」なら処理を実行（イベント委譲）
+document.body.addEventListener('click', (e) => {
+  const btn = e.target.closest('.show-img-btn');
+  if (btn) {
+    const imgSrc = btn.getAttribute('data-img');
+    if (imgSrc) {
+      modalImgTarget.src = imgSrc;
+      imgModal.classList.remove('hide');
+    }
+  }
+});
+
+// 背景の暗い部分か「閉じる」ボタンがクリックされたらモーダルを隠す
+imgModal.addEventListener('click', (e) => {
+  if (e.target === imgModal || e.target === closeImgModal) {
+    imgModal.classList.add('hide');
+    // アニメーション完了後に画像のURLをリセット（ちらつき防止）
+    setTimeout(() => { modalImgTarget.src = ''; }, 200);
+  }
+});
+
+</script>
+</body>
+</html>
