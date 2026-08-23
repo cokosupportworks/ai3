@@ -234,6 +234,40 @@
     background: #fff;
   }
 
+  #spotlightOverlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(17, 24, 39, 0.85); /* 周囲を暗くするための半透明黒背景 */
+    z-index: 8000; opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  #spotlightOverlay.active {
+    opacity: 1; pointer-events: auto; cursor: pointer;
+  }
+  /* スポットライトが当たった要素のスタイル */
+  .spotlight-active {
+    position: relative;
+    z-index: 8001 !important; /* オーバーレイより手前に出す */
+    box-shadow: 0 0 0 4px var(--accent), 0 20px 50px rgba(0,0,0,0.6) !important; /* 青い枠と強い影 */
+    transform: scale(1.015); /* ほんの少しだけ手前に拡大 */
+    transition: all 0.2s ease-out;
+  }
+
+  /* レーザーポインターのスタイル */
+  #laserPointer {
+    position: fixed; top: 0; left: 0; width: 24px; height: 24px;
+    background: radial-gradient(circle, #ff1a1a 20%, rgba(255,26,26,0.5) 60%, rgba(255,0,0,0) 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 20px 8px rgba(255, 0, 0, 0.4);
+    pointer-events: none; /* ★重要：光の下にある要素をクリックできるようにする */
+    z-index: 99999; /* どの要素よりも一番手前に表示 */
+    transform: translate(-50%, -50%); /* カーソルの中心に光の中心を合わせる */
+    opacity: 0; /* 初期状態は非表示 */
+    transition: opacity 0.2s ease;
+  }
+  #laserPointer.active {
+    opacity: 1;
+  }
+
   @media(max-width: 900px) {
     .app { grid-template-columns: 1fr; }
     .sidebar { position: sticky; z-index: 20; height: auto; padding: 12px 14px; }
@@ -271,8 +305,8 @@
 <section id="home">
 <div class="hero">
  <div class="heroCard">
-   <div class="badge">90分・参加者用</div>
-   <h1>「作る → 育てる → とどける」</h1>
+   <div class="badge"></div>
+   <h1>「作る → 育てる → 届ける」</h1>
    <p>Gemini Canvasで教材アプリを作り、必要に応じてGitHub Pagesで公開、最後にQRコードまでつなげます。ここは研修中に開きっぱなしで使うためのナビです。</p>
    <div class="route">
      <div><strong>01</strong>つくる</div>
@@ -283,9 +317,9 @@
    </div>
  </div>
  <div class="goal">
-   <div class="muted">第一ゴール</div>
+   <div class="muted">共通のゴール</div>
    <div class="big">自分の教材アプリを1つ形にする</div>
-   <p>GitHub公開は発展課題。60分時点でここまで来ていれば成功です。</p>
+   <p>GitHub公開は発展課題。始めての方はここまで来ていれば成功です。</p>
  </div>
 </div>
 <div class="cards">
@@ -955,6 +989,84 @@ switchButton.addEventListener('click', () => {
     titleImage.src = 'title01.png';
     switchButton.textContent = 'Geminiが生成したタイトル画像を見てみる';
     currentTitleImage = 1;
+  }
+});
+
+// オーバーレイ（暗幕）要素を作成して画面に追加
+const spotlightOverlay = document.createElement('div');
+spotlightOverlay.id = 'spotlightOverlay';
+document.body.appendChild(spotlightOverlay);
+
+let currentSpotlight = null;
+
+// 暗幕部分をクリックした時はスポットライトを解除する
+spotlightOverlay.addEventListener('click', () => {
+  if (currentSpotlight) {
+    currentSpotlight.classList.remove('spotlight-active');
+    spotlightOverlay.classList.remove('active');
+    currentSpotlight = null;
+  }
+});
+
+// Alt (MacはOption) + クリックで対象を強調表示
+document.addEventListener('click', (e) => {
+  // Alt / Optionキーが押されているかチェック
+  if (e.altKey) {
+    // ボタンやリンクの通常の動作（画面遷移など）を防ぐ
+    e.preventDefault();
+    
+    // クリックした場所から一番近い「説明のまとまり（カード枠など）」を探す
+    const target = e.target.closest('.card, .heroCard, .goal');
+    
+    if (target) {
+      if (currentSpotlight === target) {
+        // 既にスポットライトが当たっている場所なら解除
+        target.classList.remove('spotlight-active');
+        spotlightOverlay.classList.remove('active');
+        currentSpotlight = null;
+      } else {
+        // 別の場所に当たっていたら、まずそれを解除
+        if (currentSpotlight) {
+          currentSpotlight.classList.remove('spotlight-active');
+        }
+        // 新しい場所にスポットライトを当てる
+        target.classList.add('spotlight-active');
+        spotlightOverlay.classList.add('active');
+        currentSpotlight = target;
+      }
+    }
+  }
+});
+
+// レーザーポインター機能（Alt + Pで切り替え）
+const laserPointer = document.createElement('div');
+laserPointer.id = 'laserPointer';
+document.body.appendChild(laserPointer);
+
+let isLaserActive = false;
+
+// キーボードの入力を監視
+document.addEventListener('keydown', (e) => {
+  // Altキー (MacはOption) と Pキーの同時押しを検知
+  // e.code === 'KeyP' を使うことで、Optionキーによる特殊文字入力(πなど)を回避して物理的なPキーを検知する
+  if (e.altKey && (e.code === 'KeyP' || e.key.toLowerCase() === 'p')) {
+    e.preventDefault(); // ブラウザのデフォルトショートカット挙動をブロック
+    isLaserActive = !isLaserActive; // オン/オフを切り替え
+    
+    if (isLaserActive) {
+      laserPointer.classList.add('active');
+    } else {
+      laserPointer.classList.remove('active');
+    }
+  }
+});
+
+// マウスの動きを監視
+document.addEventListener('mousemove', (e) => {
+  // レーザーがオンの時だけ、マウス位置にポインター要素を追従させる
+  if (isLaserActive) {
+    laserPointer.style.left = e.clientX + 'px';
+    laserPointer.style.top = e.clientY + 'px';
   }
 });
 
