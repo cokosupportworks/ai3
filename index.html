@@ -208,7 +208,7 @@
   }
   #titleImage {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    object-fit: cover; /* 画像を画面いっぱいに広げて表示 */
+    object-fit: contain; /* 画像全体が画面内に収まるように表示（見切れないようにする） */
   }
   #startButton {
     position: absolute; top: 75%; left: 50%;
@@ -948,7 +948,7 @@ startButton.addEventListener('click', () => {
 
 switchButton.addEventListener('click', () => {
   if (currentTitleImage === 1) {
-    titleImage.src = 'title02.png';
+    titleImage.src = 'title02.jpg';
     switchButton.textContent = 'ChatGPTが生成したタイトル画像に戻す';
     currentTitleImage = 2;
   } else {
