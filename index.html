@@ -197,6 +197,43 @@
   }
   .show-img-btn:hover { background: #e2e8f0; color: #1e293b; border-color: #94a3b8; }
 
+  /* タイトル画面のスタイル */
+  #titleScreen {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #000; z-index: 10000; display: flex;
+    transition: opacity 0.5s ease;
+  }
+  #titleScreen.hidden {
+    opacity: 0; pointer-events: none;
+  }
+  #titleImage {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    object-fit: cover; /* 画像を画面いっぱいに広げて表示 */
+  }
+  #startButton {
+    position: absolute; top: 75%; left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 18px 48px; font-size: 24px; font-weight: bold;
+    border-radius: 50px; background: var(--accent); color: #fff;
+    border: 3px solid rgba(255,255,255,0.8);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    cursor: pointer; z-index: 10001; transition: all 0.2s;
+  }
+  #startButton:hover {
+    background: #4338ca; transform: translate(-50%, -50%) scale(1.05);
+  }
+  #switchButton {
+    position: absolute; bottom: 20px; right: 20px;
+    padding: 10px 16px; font-size: 13px; font-weight: bold;
+    border-radius: 8px; background: rgba(255,255,255,0.9);
+    color: #1f2937; border: 1px solid #d1d5db;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    cursor: pointer; z-index: 10001; transition: background 0.2s;
+  }
+  #switchButton:hover {
+    background: #fff;
+  }
+
   @media(max-width: 900px) {
     .app { grid-template-columns: 1fr; }
     .sidebar { position: sticky; z-index: 20; height: auto; padding: 12px 14px; }
@@ -213,6 +250,13 @@
 </style>
 </head>
 <body>
+<!-- タイトル画面 -->
+<div id="titleScreen">
+  <img id="titleImage" src="title01.png" alt="タイトル画像">
+  <button id="startButton">始める</button>
+  <button id="switchButton">Geminiが生成したタイトル画像を見てみる</button>
+</div>
+
 <div class="app">
 <aside class="sidebar">
   <div class="brand">R8テーマ研修 ×<br>AIを用いた教材アプリ作成<small>特製⭐️お助けアプリ</small></div>
@@ -882,6 +926,35 @@ imgModal.addEventListener('click', (e) => {
     imgModal.classList.add('hide');
     // アニメーション完了後に画像のURLをリセット（ちらつき防止）
     setTimeout(() => { modalImgTarget.src = ''; }, 200);
+  }
+});
+
+// タイトル画面の制御
+const titleScreen = document.getElementById('titleScreen');
+const titleImage = document.getElementById('titleImage');
+const startButton = document.getElementById('startButton');
+const switchButton = document.getElementById('switchButton');
+
+let currentTitleImage = 1;
+
+startButton.addEventListener('click', () => {
+  // フワッと消えるアニメーションを開始
+  titleScreen.classList.add('hidden');
+  // アニメーション時間(0.5秒)経過後に要素を完全に非表示にして操作の邪魔にならないようにする
+  setTimeout(() => {
+    titleScreen.style.display = 'none';
+  }, 500);
+});
+
+switchButton.addEventListener('click', () => {
+  if (currentTitleImage === 1) {
+    titleImage.src = 'title02.png';
+    switchButton.textContent = 'ChatGPTが生成したタイトル画像に戻す';
+    currentTitleImage = 2;
+  } else {
+    titleImage.src = 'title01.png';
+    switchButton.textContent = 'Geminiが生成したタイトル画像を見てみる';
+    currentTitleImage = 1;
   }
 });
 
